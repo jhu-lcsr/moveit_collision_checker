@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import rospy
-from moveit_collision_checker_py import Checker, init_roscpp
+from moveit_collision_checker_py import Checker, init_roscpp, spin_once
 
 def main():
     rospy.init_node('mcc_test')
@@ -21,7 +21,7 @@ def main():
 
     r = rospy.Rate(100.0)
     while not rospy.is_shutdown():
-        mcc.spin_once()
+        spin_once()
         valid = mcc.check_state(position, orientation, joint_positions, ignore)
         rospy.loginfo('Valid: {}'.format(valid))
         r.sleep()

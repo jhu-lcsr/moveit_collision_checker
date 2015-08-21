@@ -61,18 +61,14 @@ public:
     python_to_vector(ignore_obj, ignore);
     return checkState(position, orientation, joint_positions, ignore);
   }
-
-  void spin_once() {
-    ros::spinOnce();
-  }
 };
 
 BOOST_PYTHON_MODULE(moveit_collision_checker_py)
 {
   def("init_roscpp", init_roscpp);
+  def("spin_once", ros::spinOnce);
   class_<CheckerWrapper>("Checker", init<std::string, std::string, std::string>())
     .def("check_state", &CheckerWrapper::check_state)
     .def("print_objects", &CheckerWrapper::printObjects)
-    .def("spin_once", &CheckerWrapper::spin_once)
     ;
 };
