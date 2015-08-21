@@ -15,9 +15,11 @@
  * /clock [rosgraph_msgs/Clock]
 
 -->
-  <group ns="gazebo/mcc_test_cpp">
-    <param name="robot_description_param" value="mcc_description"/>
+  <arg name="cpp" default="false"/>
+  <arg if="$(arg cpp)" name="suffix" value="_cpp"/>
+  <arg unless="$(arg cpp)" name="suffix" value=""/>
 
+  <group ns="gazebo/mcc_test_cpp">
     <param name="mcc_description"
       command="$(find xacro)/xacro.py '$(find barrett_model)/robots/bhand.urdf.xacro'
       prefix:=mcc
@@ -27,24 +29,10 @@
     <param name="mcc_description_semantic"
       command="$(find xacro)/xacro.py '$(find barrett_wam_moveit_config)/config/bhand.srdf.xacro'
       prefix:=mcc" />
-
-    <param name="root_link" value="mcc/bhand/bhand_palm_link"/>
-    <param name="scene_topic" value="planning_scene"/>
   </group>
 
-  <node ns="gazebo" name="mcc_test" pkg="moveit_collision_checker" type="mcc_test.py" output="screen">
+  <node ns="gazebo" name="mcc_test$(arg suffix)" pkg="moveit_collision_checker" type="mcc_test.py" output="screen">
     <param name="robot_description_param" value="mcc_description"/>
-
-    <param name="mcc_description"
-      command="$(find xacro)/xacro.py '$(find barrett_model)/robots/bhand.urdf.xacro'
-      prefix:=mcc
-      parent_link:=world
-      primitive:=false" />
-
-    <param name="mcc_description_semantic"
-      command="$(find xacro)/xacro.py '$(find barrett_wam_moveit_config)/config/bhand.srdf.xacro'
-      prefix:=mcc" />
-
     <param name="root_link" value="mcc/bhand/bhand_palm_link"/>
     <param name="scene_topic" value="planning_scene"/>
   </node>
