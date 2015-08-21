@@ -16,11 +16,13 @@ def main():
     position = (0.5,0.5,0.25)
     orientation = (0.0, 0.0, 0.0, 1.0)
     joint_positions = 8 * [0.0]
+    ignore = ()
+    #ignore = ('mcc/bhand/finger_1/dist_link', 'mcc/bhand/finger_2/dist_link', 'mcc/bhand/finger_3/dist_link')
 
     r = rospy.Rate(100.0)
     while not rospy.is_shutdown():
         mcc.spin_once()
-        valid = mcc.check_state(position, orientation, joint_positions)
+        valid = mcc.check_state(position, orientation, joint_positions, ignore)
         rospy.loginfo('Valid: {}'.format(valid))
         r.sleep()
 

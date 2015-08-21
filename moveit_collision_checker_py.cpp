@@ -52,12 +52,14 @@ public:
 
   CheckerWrapper(const CheckerWrapper &other) : Checker(other) { }
 
-  bool check_state(object position_obj, object orientation_obj, object joint_positions_obj) {
+  bool check_state(object position_obj, object orientation_obj, object joint_positions_obj, object ignore_obj) {
     std::vector<double> position, orientation, joint_positions;
+    std::vector<std::string> ignore;
     python_to_vector(position_obj, position);
     python_to_vector(orientation_obj, orientation);
     python_to_vector(joint_positions_obj, joint_positions);
-    return checkState(position, orientation, joint_positions);
+    python_to_vector(ignore_obj, ignore);
+    return checkState(position, orientation, joint_positions, ignore);
   }
 
   void spin_once() {
@@ -70,6 +72,7 @@ BOOST_PYTHON_MODULE(moveit_collision_checker_py)
   def("init_roscpp", init_roscpp);
   class_<CheckerWrapper>("Checker", init<std::string, std::string, std::string>())
     .def("check_state", &CheckerWrapper::check_state)
+    .def("print_objects", &CheckerWrapper::printObjects)
     .def("spin_once", &CheckerWrapper::spin_once)
     ;
 };

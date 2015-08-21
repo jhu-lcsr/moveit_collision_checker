@@ -1,4 +1,5 @@
 
+#include <algorithm>
 #include <ros/ros.h>
 #include <moveit_collision_checker/moveit_collision_checker.h>
 #include <urdf_parser/urdf_parser.h>
@@ -30,11 +31,20 @@ Checker::Checker(
 
 }
 
+void Checker::printObjects()
+{
+  monitor_.getPlanningScene()->printKnownObjects(std::cerr);
+}
+
 bool Checker::checkState(
     std::vector<double> position,
     std::vector<double> orientation,
-    std::vector<double> joint_positions)
+    std::vector<double> joint_positions,
+    std::vector<std::string> ignore)
 {
+  for(auto &name:ignore) {
+    ROS_DEBUG_STREAM("Ignoring: "<<name);
+  }
 
   // Set robot_state_ joints
   robot_state_.setVariablePositions(joint_positions);
@@ -57,10 +67,27 @@ bool Checker::checkState(
   // Update so the link transforms aren't dirty
   robot_state_.update();
 
-#if 1
-  monitor_.getPlanningScene()->printKnownObjects(std::cerr);
-#endif
+  // Check if the state is valid
+  bool state_valid = monitor_.getPlanningScene()->isStateValid(robot_state_);
 
-  return monitor_.getPlanningScene()->isStateValid(robot_state_);
+  // If the state isn't valid, figure out why
+  if(not state_valid) {
+    collision_detection::CollisionResult::ContactMap contact_map;
+    monitor_.getPlanningScene()->getCollidingPairs(contact_map, robot_state_);
+    for(auto &contact_pair : contact_map) {
+      // Determine if this collision can be ignored
+      bool ignore_first = std::find(ignore.begin(), ignore.end(), contact_pair.first.first) != ignore.end();
+      bool ignore_second = std::find(ignore.begin(), ignore.end(), contact_pair.first.second) != ignore.end();
+
+      ROS_DEBUG_STREAM("colliding: "<<contact_pair.first.first<<" ("<<(ignore_first?"ignore":"collide")<<") X "<<contact_pair.first.second<<" ("<<(ignore_second?"ignore":"collide")<<")");
+
+      // If neither is on the ignore list, return false
+      if(not (ignore_first or ignore_second)) {
+        return false;
+      }
+    }
+  }
+
+  return true;
 }
 

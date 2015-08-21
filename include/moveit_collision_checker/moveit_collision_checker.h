@@ -17,10 +17,13 @@ namespace moveit_collision_checker {
 
     Checker(const Checker& other);
 
+    void printObjects();
+
     bool checkState(
         std::vector<double> position,
         std::vector<double> orientation,
-        std::vector<double> joint_positions);
+        std::vector<double> joint_positions,
+        std::vector<std::string> ignore);
 
   private:
   
