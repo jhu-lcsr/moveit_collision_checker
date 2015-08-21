@@ -19,6 +19,8 @@ namespace moveit_collision_checker {
 
     void printObjects();
 
+    void getJointNames(std::vector<std::string> &joint_names);
+
     bool checkState(
         std::vector<double> position,
         std::vector<double> orientation,

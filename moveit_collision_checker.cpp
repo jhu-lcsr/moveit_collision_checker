@@ -36,6 +36,11 @@ void Checker::printObjects()
   monitor_.getPlanningScene()->printKnownObjects(std::cerr);
 }
 
+void Checker::getJointNames(std::vector<std::string> &joint_names)
+{
+  joint_names = robot_state_.getVariableNames();
+}
+
 bool Checker::checkState(
     std::vector<double> position,
     std::vector<double> orientation,
@@ -52,8 +57,8 @@ bool Checker::checkState(
   // Convert pose to Affine3d
   Eigen::Affine3d transform = Eigen::Affine3d::Identity();
   transform
-    .pretranslate( Eigen::Vector3d( position[0], position[1], position[2]))
-    .prerotate( Eigen::Quaterniond( orientation[3], orientation[0], orientation[1], orientation[2]));
+    .translate( Eigen::Vector3d( position[0], position[1], position[2]))
+    .rotate( Eigen::Quaterniond( orientation[3], orientation[0], orientation[1], orientation[2]));
 
   ROS_DEBUG_STREAM("transform: "<<std::endl<<transform.matrix());
 
