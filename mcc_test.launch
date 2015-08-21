@@ -1,0 +1,53 @@
+<launch>
+  <!--
+ * /gazebo/planning_scene [moveit_msgs/PlanningScene]
+ * /tf [tf/tfMessage]
+ * /tf_static [unknown type]
+ * /gazebo/planning_scene_world [unknown type]
+ * /gazebo/collision_object [moveit_msgs/CollisionObject]
+ * /clock [rosgraph_msgs/Clock]
+
+ * /gazebo/planning_scene [moveit_msgs/PlanningScene]
+ * /tf [tf/tfMessage]
+ * /tf_static [unknown type]
+ * /gazebo/planning_scene_world [unknown type]
+ * /gazebo/collision_object [moveit_msgs/CollisionObject]
+ * /clock [rosgraph_msgs/Clock]
+
+-->
+  <group ns="gazebo/mcc_test_cpp">
+    <param name="robot_description_param" value="mcc_description"/>
+
+    <param name="mcc_description"
+      command="$(find xacro)/xacro.py '$(find barrett_model)/robots/bhand.urdf.xacro'
+      prefix:=mcc
+      parent_link:=world
+      primitive:=false" />
+
+    <param name="mcc_description_semantic"
+      command="$(find xacro)/xacro.py '$(find barrett_wam_moveit_config)/config/bhand.srdf.xacro'
+      prefix:=mcc" />
+
+    <param name="root_link" value="mcc/bhand/bhand_palm_link"/>
+    <param name="scene_topic" value="planning_scene"/>
+  </group>
+
+  <node ns="gazebo" name="mcc_test" pkg="moveit_collision_checker" type="mcc_test.py" output="screen">
+    <param name="robot_description_param" value="mcc_description"/>
+
+    <param name="mcc_description"
+      command="$(find xacro)/xacro.py '$(find barrett_model)/robots/bhand.urdf.xacro'
+      prefix:=mcc
+      parent_link:=world
+      primitive:=false" />
+
+    <param name="mcc_description_semantic"
+      command="$(find xacro)/xacro.py '$(find barrett_wam_moveit_config)/config/bhand.srdf.xacro'
+      prefix:=mcc" />
+
+    <param name="root_link" value="mcc/bhand/bhand_palm_link"/>
+    <param name="scene_topic" value="planning_scene"/>
+  </node>
+
+</launch>
+
