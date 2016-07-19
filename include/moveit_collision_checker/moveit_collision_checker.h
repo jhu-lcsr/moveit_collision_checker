@@ -22,18 +22,33 @@ namespace moveit_collision_checker {
     void getJointNames(std::vector<std::string> &joint_names);
 
     bool checkState(
-        std::vector<double> position,
-        std::vector<double> orientation,
-        std::vector<double> joint_positions,
-        std::vector<std::string> ignore);
+        std::vector<double> &position,
+        std::vector<double> &orientation,
+        std::vector<double> &joint_positions,
+        std::vector<std::string> &ignore);
+
+    bool checkState(
+        geometry_msgs::Pose &pose,
+        sensor_msgs::JointState &joint_state,
+        std::vector<std::string> &ignore);
+
+    bool checkState(
+        Eigen::Affine3d &transform,
+        std::vector<double> &joint_positions,
+        std::vector<std::string> &ignore);
+
+  protected:
+    void init();
 
   private:
-  
+    std::string robot_description_param_;
+    std::string root_link_;
+    std::string planning_scene_topic_;
+
     boost::shared_ptr<tf::TransformListener> tf_listener_;
     boost::shared_ptr<robot_model_loader::RobotModelLoader> robot_model_loader_;
-    planning_scene_monitor::PlanningSceneMonitor monitor_;
-    moveit::core::RobotState robot_state_;
-    std::string root_link_;
+    planning_scene_monitor::PlanningSceneMonitorPtr monitor_;
+    moveit::core::RobotStatePtr robot_state_;
   };
 
 }
