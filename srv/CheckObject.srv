@@ -1,0 +1,5 @@
+string[] ids
+geometry_msgs/Pose[] poses
+---
+bool collision_free
+
